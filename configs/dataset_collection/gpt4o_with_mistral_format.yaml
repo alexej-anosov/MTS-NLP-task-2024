@@ -1,0 +1,5 @@
+model_type: gpt
+model_name: gpt-4o
+mode: dataset_collection
+dataset: data/train_dataset.csv
+tokenizer: mistralai/Mistral-7B-Instruct-v0.3

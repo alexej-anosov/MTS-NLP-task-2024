@@ -1,0 +1,4 @@
+model_type: gpt
+model_name: gpt-4o
+mode: inference
+tokenizer: mistralai/Mistral-7B-Instruct-v0.3
