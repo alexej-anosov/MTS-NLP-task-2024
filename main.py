@@ -100,7 +100,7 @@ def main(config_path):
     if params['mode'] == 'evaluation':
         eval_dataset = pd.read_csv(params['dataset'])
         experiment_id = generate('1234567890qwertyuiopasdfghjklzxcvbnm', 20)
-        for request in eval_dataset['request'].values[:2]:
+        for request in eval_dataset['request'].values:
             print(request)
             agent_executor.invoke({"input": request})
         evaluation_artifact = agent_executor.evaluation_artifact
