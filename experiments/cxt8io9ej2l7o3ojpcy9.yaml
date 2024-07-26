@@ -1,0 +1,27 @@
+artifact_path: experiments/artifacts/cxt8io9ej2l7o3ojpcy9.csv
+commit_hash: 07ed9831f5e5ebe04e964dcf815eee8dc6095f52
+config_path: configs/evaluation/gpt4o_with_mistral_format.yaml
+experiment_id: cxt8io9ej2l7o3ojpcy9
+params:
+  dataset: data/eval_dataset.csv
+  mode: evaluation
+  model_name: gpt-4o
+  model_type: gpt
+  tokenizer: mistralai/Mistral-7B-Instruct-v0.3
+score: !!python/object/apply:numpy.core.multiarray.scalar
+- !!python/object/apply:numpy.dtype
+  args:
+  - f8
+  - false
+  - true
+  state: !!python/tuple
+  - 3
+  - <
+  - null
+  - null
+  - null
+  - -1
+  - -1
+  - 0
+- !!binary |
+  AAAAAADgUkA=
