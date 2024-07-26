@@ -97,6 +97,7 @@ class CustomAgentExecutor(AgentExecutor):
             print('\n\n\n'+conversation)
                 
             score = int(input('Please provide a score for this conversation: '))
+            print('\n\n\n')
             self.evaluation_artifact.loc[len(self.evaluation_artifact)] = [self.inputs, conversation, score]
         
         return final_output

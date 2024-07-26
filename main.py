@@ -24,11 +24,11 @@ import os
 from src.tools import GetCurrentTime, GetAvailibleCities, AskUserForInfo, AskUserToChoose, GetFlights, BuyTicket
 from src.GptAgent import GptAgent
 from src.prompts import system, human
-from typing import Optional, List, Mapping, Any
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.agents import create_json_chat_agent
 from src.CustomAgentExecutor import CustomAgentExecutor
-from langchain.memory import ConversationBufferMemory
+from utils.utils import get_last_commit_hash
+
 
 torch.backends.cuda.enable_mem_efficient_sdp(False)
 torch.backends.cuda.enable_flash_sdp(False)
@@ -99,20 +99,22 @@ def main(config_path):
     
     if params['mode'] == 'evaluation':
         eval_dataset = pd.read_csv(params['dataset'])
-        experiment_id = generate('1234567890qwertyuiopasdfghjklzxcvbnm', 10)
-        for request in eval_dataset['request'].values:
+        experiment_id = generate('1234567890qwertyuiopasdfghjklzxcvbnm', 20)
+        for request in eval_dataset['request'].values[:2]:
+            print(request)
             agent_executor.invoke({"input": request})
         evaluation_artifact = agent_executor.evaluation_artifact
         artifact_path = f'experiments/artifacts/{experiment_id}.csv'
         evaluation_artifact.to_csv(artifact_path)
-        data = {
+        experiment_data = {
+            'commit_hash': get_last_commit_hash(),
             'experiment_id': experiment_id,
             'config_path': config_path,
             'params': params,
-            'mean_score': np.mean(evaluation_artifact['score'].values),
+            'mean_score': float(np.mean(evaluation_artifact['score'].values)),
             'artifact_path': artifact_path}
         with open(f'experiments/{experiment_id}.yaml', 'w') as file:
-            yaml.dump(data, file, default_flow_style=False)
+            yaml.dump(experiment_data, file, default_flow_style=False)
             
     else:
         request = input('Please provide yoy request: ')
