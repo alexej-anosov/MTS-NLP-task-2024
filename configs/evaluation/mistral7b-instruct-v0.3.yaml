@@ -1,5 +1,5 @@
-model_type: gpt
-model_name: gpt-4o
+model_type: mistral
+model_name: mistralai/Mistral-7B-Instruct-v0.3
 mode: evaluation
 tokenizer: mistralai/Mistral-7B-Instruct-v0.3
 dataset: data/eval_dataset.csv
