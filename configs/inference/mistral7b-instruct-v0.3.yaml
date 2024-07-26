@@ -1,0 +1,4 @@
+model_type: mistral
+model_name: mistralai/Mistral-7B-Instruct-v0.3
+mode: inference
+tokenizer: mistralai/Mistral-7B-Instruct-v0.3

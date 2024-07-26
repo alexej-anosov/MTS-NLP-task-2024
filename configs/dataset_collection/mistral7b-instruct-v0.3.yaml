@@ -1,0 +1,5 @@
+model_type: mistral
+model_name: mistralai/Mistral-7B-Instruct-v0.3
+mode: dataset_collection
+dataset: data/train_dataset.csv
+tokenizer: mistralai/Mistral-7B-Instruct-v0.3

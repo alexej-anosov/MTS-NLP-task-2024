@@ -28,7 +28,8 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.agents import create_json_chat_agent
 from src.CustomAgentExecutor import CustomAgentExecutor
 from utils.utils import get_last_commit_hash
-
+from src.MistralAgent import MistralAgent
+from utils.exceptions import UnknownModelException
 
 torch.backends.cuda.enable_mem_efficient_sdp(False)
 torch.backends.cuda.enable_flash_sdp(False)
@@ -57,16 +58,21 @@ def main(config_path):
     else:
         evaluation_artifact = None
         
+    temperature = 0 if params['mode'] == 'evaluation' else 0.3
+    
     if params['model_type'] == 'gpt':
         tokenizer = AutoTokenizer.from_pretrained(params['tokenizer'])
         OPENAI_CLIENT = OpenAI(api_key=config.OPENAI_API_KEY,
                             http_client=httpx.Client(proxy=config.PROXY_URL)) \
             if config.PROXY_URL \
                 else OpenAI(api_key=config.OPENAI_API_KEY)
-        temperature = 0 if params['mode'] == 'evaluation' else 0.3
         llm = GptAgent(OPENAI_MODEL_NAME=params['model_name'], OPENAI_CLIENT=OPENAI_CLIENT, tokenizer=tokenizer, mode=params['mode'], train_df=train_df, temperature=temperature)
+    elif params['model_type'] == 'mistral':
+        model = AutoModelForCausalLM.from_pretrained(params['model_name'], torch_dtype=torch.float16)
+        tokenizer = AutoTokenizer.from_pretrained(params['model_name'])
+        llm = MistralAgent(model=model, tokenizer=tokenizer, mode=params['mode'], train_df=train_df, temperature=temperature)
     else:
-        pass
+        raise UnknownModelException('Unknown model.')
     
     get_current_time_tool = GetCurrentTime()
     get_availible_cities_tool = GetAvailibleCities()
@@ -108,7 +114,7 @@ def main(config_path):
             'experiment_id': experiment_id,
             'config_path': config_path,
             'params': params,
-            'score': round(sum(evaluation_artifact['score'].values)/(len(eval_dataset)*10)*100,2),
+            'score': round(float(sum(evaluation_artifact['score'].values)/(len(evaluation_artifact)*10) * 100), 2),
             'artifact_path': artifact_path}
         with open(f'experiments/{experiment_id}.yaml', 'w') as file:
             yaml.dump(experiment_data, file, default_flow_style=False)
