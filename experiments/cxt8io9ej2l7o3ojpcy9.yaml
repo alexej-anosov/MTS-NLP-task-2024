@@ -8,20 +8,4 @@ params:
   model_name: gpt-4o
   model_type: gpt
   tokenizer: mistralai/Mistral-7B-Instruct-v0.3
-score: !!python/object/apply:numpy.core.multiarray.scalar
-- !!python/object/apply:numpy.dtype
-  args:
-  - f8
-  - false
-  - true
-  state: !!python/tuple
-  - 3
-  - <
-  - null
-  - null
-  - null
-  - -1
-  - -1
-  - 0
-- !!binary |
-  AAAAAADgUkA=
+score: 75.5
