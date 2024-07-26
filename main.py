@@ -75,7 +75,6 @@ def main(config_path):
     ask_user_to_choose_tool = AskUserToChoose()
     buy_ticket_tool = BuyTicket()
     tools = [get_current_time_tool, get_availible_cities_tool, ask_user_info_tool, get_flights_tool, ask_user_to_choose_tool, buy_ticket_tool]
-
     prompt = ChatPromptTemplate.from_messages(
         [
             ("system", system),
@@ -84,7 +83,6 @@ def main(config_path):
             MessagesPlaceholder("agent_scratchpad"),
         ]
     )
-
     agent = create_json_chat_agent(
         tools = tools,
         llm = llm,
@@ -92,7 +90,6 @@ def main(config_path):
         stop_sequence = ["STOP"],
         template_tool_response = "{observation}"
     )
-
     agent_executor = CustomAgentExecutor(agent=agent, tools=tools, verbose=False, handle_parsing_errors=True, max_iterations=20, 
                                          mode=params['mode'], evaluation_artifact=evaluation_artifact)
 
@@ -111,7 +108,7 @@ def main(config_path):
             'experiment_id': experiment_id,
             'config_path': config_path,
             'params': params,
-            'mean_score': float(np.mean(evaluation_artifact['score'].values)),
+            'score': round(sum(evaluation_artifact['score'].values)/(len(eval_dataset)*10)*100,2),
             'artifact_path': artifact_path}
         with open(f'experiments/{experiment_id}.yaml', 'w') as file:
             yaml.dump(experiment_data, file, default_flow_style=False)
