@@ -27,8 +27,8 @@ random.seed(seed)
 base_model = "mistralai/Mistral-7B-Instruct-v0.3"
 new_model = f"{base_model.split('/')[-1]}_travel_agent_{experiment_id}"
 
-
-run = wandb.init(project="MTS-NLP-task-2024", job_type="training", anonymous="allow", experiment_id=experiment_id)
+config = {'experiment_id': experiment_id}
+run = wandb.init(project="MTS-NLP-task-2024", job_type="training", anonymous="allow", config=config)
 
 
 bnb_config = BitsAndBytesConfig(
