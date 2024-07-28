@@ -14,6 +14,10 @@ class GetCurrentTime(BaseTool):
     name = "get current time"
     description = """
 Use this tool to get current time. Tool doesn't get any params.
+Example of usage:
+{"thought": "I need to know the current date to determine the date for next Tuesday",
+ "action": "get current time",
+ "action_input": {}}
 """
     def _run(self, *args):
         # datetime.datetime.now(), datetime.datetime.now().strftime('%A')
@@ -26,7 +30,12 @@ class GetAvailibleCities(BaseTool):
 Use this tool to get list of availible cities. 
 You can use it to check if cities from the user's request presented in the data.
 Maybe there is a spelling mistake, so just correct it. If it is not spelling mistake tell the user that the city is not in the data.
+Example of usage:
+{"thought": "Check if the cities are available in the data",
+ "action": "get availible cities",
+ "action_input": {}}
 """
+
     def _run(self, *args):
         return ['Jakarta', 'Melbourne', 'Reykjavik', 'Munich', 'Madrid',
        'Buenos Aires', 'Auckland', 'Saratov', 'Lisbon', 'Mexico City',
@@ -73,7 +82,11 @@ Use this tool to ask user a question about his preferences.
 Use it only if you don't have enought information.
 It requires a string input with your question and all the necessary information. 
 If you have several questions use the tool several times. DO NOT ASK SEVERAL QUESTIONS IN ONE MESSAGE!!!
-Be sure syntax is correct."
+Be sure syntax is correct.
+Example of usage:
+{"thought": "I need to gather more information about the user's preferences to find the best flight options.",
+ "action": "ask user for info",
+ "action_input": "Do you have a preferred ticket class (economy or business)?"}
 """
     def _run(self, question):
         return input(f"\nAgent's question:\n{question}\nYour answer:\n")
@@ -129,7 +142,7 @@ def get_flights(
 
 
 class GetFlights(BaseTool):
-    name = "get_flights"
+    name = "get flights"
     description = """
 Use this tool to get flights information.
 It requires folowing arguments to filter data:

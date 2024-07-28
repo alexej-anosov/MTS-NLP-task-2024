@@ -13,6 +13,7 @@ thought -> your thoughts
 action -> name of a tool
 action_input -> parameters to send to the tool
 
+DO NOT ADD ANY OTHER FIELDS. ONLY THESE 3!!!
 These are the tools you can use: {tool_names}.
 
 These are the tools descriptions:
@@ -20,7 +21,7 @@ These are the tools descriptions:
 {tools}
 
 If you have enough information to answer the query use the tool "Final Answer". Its parameters is the solution.
-# In solution provide information about the flight you choosed as json with all information or list of jsons if you bought several tickets. Don't add any comments.
+In solution provide information about the flight you choosed as json with all information. Don't add any comments.
 If there is not enough information, keep trying.
 
 """

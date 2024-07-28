@@ -1,8 +1,3 @@
-# в конфиг
-OPENAI_MODEL_NAME = 'gpt-4o'
-
-# 'gpt-3.5-turbo-0125'
-# 'gpt-4o'
 import numpy as np
 from nanoid import generate
 import argparse
@@ -30,7 +25,7 @@ from src.CustomAgentExecutor import CustomAgentExecutor
 from utils.utils import get_last_commit_hash
 from src.MistralAgent import MistralAgent
 from utils.exceptions import UnknownModelException
-
+from utils.s3_functions import download_file
 torch.backends.cuda.enable_mem_efficient_sdp(False)
 torch.backends.cuda.enable_flash_sdp(False)
     
@@ -42,6 +37,11 @@ def load_params(file_path):
 
 
 def main(config_path):
+    
+    if not os.path.exists('data/airplane_schedule.csv'):
+        download_file('airplane_schedule.csv', 'data/airplane_schedule.csv')
+    if not os.path.exists('data/eval_dataset.csv'):
+        download_file('eval_dataset.csv', 'data/eval_dataset.csv')
     
     params = load_params(config_path)
     
@@ -68,8 +68,13 @@ def main(config_path):
                 else OpenAI(api_key=config.OPENAI_API_KEY)
         llm = GptAgent(OPENAI_MODEL_NAME=params['model_name'], OPENAI_CLIENT=OPENAI_CLIENT, tokenizer=tokenizer, mode=params['mode'], train_df=train_df, temperature=temperature)
     elif params['model_type'] == 'mistral':
-        model = AutoModelForCausalLM.from_pretrained(params['model_name'], torch_dtype=torch.float16)
+        quantization_config = BitsAndBytesConfig(load_in_4bit=True,
+        bnb_4bit_use_double_quant=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.float16)
+        model = AutoModelForCausalLM.from_pretrained(params['model_name'], device_map="auto", quantization_config=quantization_config)
         tokenizer = AutoTokenizer.from_pretrained(params['model_name'])
+        tokenizer.pad_token = tokenizer.eos_token
         llm = MistralAgent(model=model, tokenizer=tokenizer, mode=params['mode'], train_df=train_df, temperature=temperature)
     else:
         raise UnknownModelException('Unknown model.')
@@ -96,7 +101,7 @@ def main(config_path):
         stop_sequence = ["STOP"],
         template_tool_response = "{observation}"
     )
-    agent_executor = CustomAgentExecutor(agent=agent, tools=tools, verbose=False, handle_parsing_errors=True, max_iterations=20, 
+    agent_executor = CustomAgentExecutor(agent=agent, tools=tools, verbose=True, handle_parsing_errors=True, max_iterations=10, 
                                          mode=params['mode'], evaluation_artifact=evaluation_artifact)
 
     
@@ -104,8 +109,12 @@ def main(config_path):
         eval_dataset = pd.read_csv(params['dataset'])
         experiment_id = generate('1234567890qwertyuiopasdfghjklzxcvbnm', 20)
         for request in eval_dataset['request'].values:
+            # try:
             print(request)
             agent_executor.invoke({"input": request})
+            # except:
+            #     1/0
+                # agent_executor.evaluation_artifact.loc[len(agent_executor.evaluation_artifact)] = [request, '', 0]
         evaluation_artifact = agent_executor.evaluation_artifact
         artifact_path = f'experiments/artifacts/{experiment_id}.csv'
         evaluation_artifact.to_csv(artifact_path)
