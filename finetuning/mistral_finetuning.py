@@ -1,4 +1,6 @@
 import pandas as pd
+import random
+import numpy as np
 import torch
 import wandb
 from datasets import Dataset
@@ -8,6 +10,15 @@ from transformers import (AutoModelForCausalLM, AutoTokenizer,
                           BitsAndBytesConfig,
                           TrainingArguments)
 from trl import SFTTrainer
+
+
+seed = 42
+torch.manual_seed(seed)
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
+np.random.seed(seed)
+random.seed(seed)
+
 
 base_model = "mistralai/Mistral-7B-Instruct-v0.3"
 new_model = f"{base_model.split('/')[-1]}_travel_agent"
@@ -95,7 +106,7 @@ training_arguments = TrainingArguments(
     output_dir="./results",
     per_device_train_batch_size=1,
     gradient_accumulation_steps=8,
-    num_train_epochs=20,
+    num_train_epochs=2,
     per_device_eval_batch_size=1,
     eval_accumulation_steps=8,
     evaluation_strategy="epoch",
