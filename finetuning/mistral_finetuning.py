@@ -65,13 +65,13 @@ for i in range(1, len(df)):
 
 train_dataset = pd.DataFrame(
     {
-        "text": df[df["sample"].apply(lambda x: x in [1, 5, 10])]["text"],
+        "text": df[df["sample"].apply(lambda x: x not in [1, 5, 10])]["text"],
     }
 )
 
 test_dataset = pd.DataFrame(
     {
-        "text": df[df["sample"].apply(lambda x: x not in [1, 5, 10])]["text"],
+        "text": df[df["sample"].apply(lambda x: x in [1, 5, 10])]["text"],
     }
 )
 
@@ -95,7 +95,7 @@ training_arguments = TrainingArguments(
     output_dir="./results",
     per_device_train_batch_size=1,
     gradient_accumulation_steps=8,
-    num_train_epochs=10,
+    num_train_epochs=20,
     per_device_eval_batch_size=1,
     eval_accumulation_steps=8,
     evaluation_strategy="epoch",
@@ -103,7 +103,7 @@ training_arguments = TrainingArguments(
     logging_strategy="epoch",
     logging_first_step=True,
     optim="paged_adamw_32bit",
-    learning_rate=1e-3,
+    learning_rate=5e-4,
     weight_decay=0.001,
     fp16=True,
     bf16=False,
