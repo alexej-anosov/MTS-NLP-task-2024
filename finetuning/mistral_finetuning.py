@@ -10,6 +10,10 @@ from transformers import (AutoModelForCausalLM, AutoTokenizer,
                           BitsAndBytesConfig,
                           TrainingArguments)
 from trl import SFTTrainer
+from nanoid import generate
+
+
+experiment_id = generate("1234567890qwertyuiopasdfghjklzxcvbnm", 10)
 
 
 seed = 42
@@ -21,10 +25,10 @@ random.seed(seed)
 
 
 base_model = "mistralai/Mistral-7B-Instruct-v0.3"
-new_model = f"{base_model.split('/')[-1]}_travel_agent"
+new_model = f"{base_model.split('/')[-1]}_travel_agent_{experiment_id}"
 
 
-run = wandb.init(project="MTS-NLP-task-2024", job_type="training", anonymous="allow")
+run = wandb.init(project="MTS-NLP-task-2024", job_type="training", anonymous="allow", experiment_id=experiment_id)
 
 
 bnb_config = BitsAndBytesConfig(
@@ -103,15 +107,18 @@ model = get_peft_model(model, peft_config)
 
 
 training_arguments = TrainingArguments(
-    output_dir="./results",
+    output_dir=f"./results_{experiment_id}",
     per_device_train_batch_size=1,
     gradient_accumulation_steps=8,
-    num_train_epochs=2,
+    num_train_epochs=5,
     per_device_eval_batch_size=1,
     eval_accumulation_steps=8,
-    evaluation_strategy="epoch",
-    save_strategy="epoch",
-    logging_strategy="epoch",
+    evaluation_strategy="steps",
+    eval_steps=32,
+    save_strategy="steps",
+    save_steps=32,
+    logging_strategy="steps",
+    logging_steps=32, 
     logging_first_step=True,
     optim="paged_adamw_32bit",
     learning_rate=5e-4,
@@ -123,6 +130,7 @@ training_arguments = TrainingArguments(
     group_by_length=False,
     lr_scheduler_type="constant",
     report_to="wandb",
+    load_best_model_at_end=True
 )
 
 trainer = SFTTrainer(
