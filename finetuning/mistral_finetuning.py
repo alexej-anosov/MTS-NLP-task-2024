@@ -110,7 +110,7 @@ training_arguments = TrainingArguments(
     output_dir=f"./results_{experiment_id}",
     per_device_train_batch_size=1,
     gradient_accumulation_steps=8,
-    num_train_epochs=5,
+    num_train_epochs=3,
     per_device_eval_batch_size=1,
     eval_accumulation_steps=8,
     evaluation_strategy="steps",
@@ -128,7 +128,7 @@ training_arguments = TrainingArguments(
     max_grad_norm=0.3,
     warmup_ratio=0.03,
     group_by_length=False,
-    lr_scheduler_type="constant",
+    lr_scheduler_type="linear",
     report_to="wandb",
     load_best_model_at_end=True
 )
