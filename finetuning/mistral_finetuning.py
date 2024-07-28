@@ -13,7 +13,7 @@ base_model = "mistralai/Mistral-7B-Instruct-v0.3"
 new_model = f"{base_model.split('/')[-1]}_travel_agent"
 
 
-run = wandb.init(project="TravelAgent", job_type="training", anonymous="allow")
+run = wandb.init(project="MTS-NLP-task-2024", job_type="training", anonymous="allow")
 
 
 bnb_config = BitsAndBytesConfig(
