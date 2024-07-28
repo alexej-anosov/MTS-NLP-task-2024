@@ -109,9 +109,9 @@
 ```
 .
 ├── configs                              # Configuration files for model inference, evaluation and dataset collection
-│   ├── dataset_collection               # Contains configuration for inference 
+│   ├── dataset_collection               # Contains configuration for dataset collection
 │   ├── evaluation                       # Contains configuration for evaluation
-│   └── inference                        # Contains configuration for dataset collection
+│   └── inference                        # Contains configuration for inference 
 ├── data                                 # All project data
 │   ├── airplane_schedule.csv            # Dataset with airplane schedule, file downloads from S3 with the first run of main.py
 │   ├── eval_dataset.csv                 # Dataset for evaluation
