@@ -65,13 +65,13 @@ for i in range(1, len(df)):
 
 train_dataset = pd.DataFrame(
     {
-        "text": df[df["sample"] in [1, 5, 10]]["text"],
+        "text": df[df["sample"].apply(lambda x: x in [1, 5, 10])]["text"],
     }
 )
 
 test_dataset = pd.DataFrame(
     {
-        "text": df[df["sample"] not in [1, 5, 10]]["text"],
+        "text": df[df["sample"].apply(lambda x: x not in [1, 5, 10])]["text"],
     }
 )
 
