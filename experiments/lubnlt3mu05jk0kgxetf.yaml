@@ -1,0 +1,11 @@
+artifact_path: experiments/artifacts/lubnlt3mu05jk0kgxetf.csv
+commit_hash: 7b0c846e9291e314f6cbccd3eb7a3583daccbe64
+config_path: configs/evaluation/mistral7b-instruct-v0.3.yaml
+experiment_id: lubnlt3mu05jk0kgxetf
+params:
+  dataset: data/eval_dataset.csv
+  mode: evaluation
+  model_name: mistralai/Mistral-7B-Instruct-v0.3
+  model_type: mistral
+  tokenizer: mistralai/Mistral-7B-Instruct-v0.3
+score: 0.0
