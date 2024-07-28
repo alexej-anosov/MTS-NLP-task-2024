@@ -1,13 +1,14 @@
-from config import config
-import torch
-from langchain.tools import BaseTool
 import datetime
-import pandas as pd
 import os
-from langchain.llms.base import LLM
+from typing import Any, List, Mapping, Optional, Union
+
+import pandas as pd
+import torch
 from langchain.callbacks.manager import CallbackManagerForLLMRun
-from typing import Optional, List, Mapping, Any, Union
-import datetime
+from langchain.llms.base import LLM
+from langchain.tools import BaseTool
+
+from config import config
 
 
 class GetCurrentTime(BaseTool):
@@ -19,9 +20,12 @@ Example of usage:
  "action": "get current time",
  "action_input": {}}
 """
+
     def _run(self, *args):
         # datetime.datetime.now(), datetime.datetime.now().strftime('%A')
-        return datetime.datetime.strptime('2024-07-10 17:00:00', '%Y-%m-%d %H:%M:%S'), 'Wednesday'
+        return datetime.datetime.strptime(
+            "2024-07-10 17:00:00", "%Y-%m-%d %H:%M:%S"
+        ), "Wednesday"
 
 
 class GetAvailibleCities(BaseTool):
@@ -37,23 +41,95 @@ Example of usage:
 """
 
     def _run(self, *args):
-        return ['Jakarta', 'Melbourne', 'Reykjavik', 'Munich', 'Madrid',
-       'Buenos Aires', 'Auckland', 'Saratov', 'Lisbon', 'Mexico City',
-       'Las Vegas', 'Kuala Lumpur', 'Warsaw', 'Doha', 'Brussels',
-       'Toronto', 'Krasnoyarsk', 'Miami', 'New York', 'Barcelona',
-       'Nizhny Novgorod', 'Havana', 'Los Angeles', 'Berlin', 'Geneva',
-       'Washington', 'Seoul', 'Frankfurt', 'Bogota', 'Tolyatti', 'Zurich',
-       'Rio de Janeiro', 'Johannesburg', 'Beijing', 'Tyumen', 'Ufa',
-       'Voronezh', 'Luxembourg', 'Kazan', 'Dublin', 'Rome', 'Krasnodar',
-       'Moscow', 'Dubai', 'Vienna', 'Lima', 'Delhi', 'Saint Petersburg',
-       'Boston', 'London', 'Athens', 'Izhevsk', 'Bangkok',
-       'Yekaterinburg', 'Montreal', 'Omsk', 'Perm', 'Prague',
-       'Novosibirsk', 'Vancouver', 'Hong Kong', 'Tel Aviv', 'Amsterdam',
-       'Paris', 'Volgograd', 'Cairo', 'Stockholm', 'Sydney',
-       'Chelyabinsk', 'Helsinki', 'Edinburgh', 'Rostov-on-Don',
-       'Istanbul', 'Copenhagen', 'Oslo', 'Tokyo', 'Singapore',
-       'Milan', 'Shanghai', 'Budapest', 'Abu Dhabi', 'Mumbai', 'Santiago',
-       'Chicago', 'Samara', 'Cape Town', 'San Francisco']
+        return [
+            "Jakarta",
+            "Melbourne",
+            "Reykjavik",
+            "Munich",
+            "Madrid",
+            "Buenos Aires",
+            "Auckland",
+            "Saratov",
+            "Lisbon",
+            "Mexico City",
+            "Las Vegas",
+            "Kuala Lumpur",
+            "Warsaw",
+            "Doha",
+            "Brussels",
+            "Toronto",
+            "Krasnoyarsk",
+            "Miami",
+            "New York",
+            "Barcelona",
+            "Nizhny Novgorod",
+            "Havana",
+            "Los Angeles",
+            "Berlin",
+            "Geneva",
+            "Washington",
+            "Seoul",
+            "Frankfurt",
+            "Bogota",
+            "Tolyatti",
+            "Zurich",
+            "Rio de Janeiro",
+            "Johannesburg",
+            "Beijing",
+            "Tyumen",
+            "Ufa",
+            "Voronezh",
+            "Luxembourg",
+            "Kazan",
+            "Dublin",
+            "Rome",
+            "Krasnodar",
+            "Moscow",
+            "Dubai",
+            "Vienna",
+            "Lima",
+            "Delhi",
+            "Saint Petersburg",
+            "Boston",
+            "London",
+            "Athens",
+            "Izhevsk",
+            "Bangkok",
+            "Yekaterinburg",
+            "Montreal",
+            "Omsk",
+            "Perm",
+            "Prague",
+            "Novosibirsk",
+            "Vancouver",
+            "Hong Kong",
+            "Tel Aviv",
+            "Amsterdam",
+            "Paris",
+            "Volgograd",
+            "Cairo",
+            "Stockholm",
+            "Sydney",
+            "Chelyabinsk",
+            "Helsinki",
+            "Edinburgh",
+            "Rostov-on-Don",
+            "Istanbul",
+            "Copenhagen",
+            "Oslo",
+            "Tokyo",
+            "Singapore",
+            "Milan",
+            "Shanghai",
+            "Budapest",
+            "Abu Dhabi",
+            "Mumbai",
+            "Santiago",
+            "Chicago",
+            "Samara",
+            "Cape Town",
+            "San Francisco",
+        ]
 
 
 class AskUserToChoose(BaseTool):
@@ -68,13 +144,14 @@ Some examples:
 1. if there is a criteria of chooice (for exmaple user prefer cheapest) -> provide a cheapest flight and ask if user likes it or he/she wants to see more variants
 2. if there is NO criteria of chooice> ->  provide all tickets and ask user to choothee or to provide the criteria
 """
+
     def _run(self, question, flights):
-        info = f'\n{question}'
+        info = f"\n{question}"
         for i, flight in enumerate(flights):
-            info += f'\n{i+1}. {flight}'
+            info += f"\n{i+1}. {flight}"
         return input(f"\nAgent's question: {info}\nYour answer:\n")
-    
-    
+
+
 class AskUserForInfo(BaseTool):
     name = "ask user for info"
     description = """
@@ -88,6 +165,7 @@ Example of usage:
  "action": "ask user for info",
  "action_input": "Do you have a preferred ticket class (economy or business)?"}
 """
+
     def _run(self, question):
         return input(f"\nAgent's question:\n{question}\nYour answer:\n")
 
@@ -108,37 +186,36 @@ def get_flights(
     sort_by: Union[str, None] = None,
     # ascending: Union[, None] = True
 ) -> List[dict]:
-    
-    df = pd.read_csv(os.path.join(os.getcwd(), 'data/airplane_schedule.csv'))
+    df = pd.read_csv(os.path.join(os.getcwd(), "data/airplane_schedule.csv"))
 
     if filter__departure_datetime_ge is not None:
-        df = df[df['departure_datetime'] >= filter__departure_datetime_ge]
+        df = df[df["departure_datetime"] >= filter__departure_datetime_ge]
     if filter__departure_datetime_le is not None:
-        df = df[df['departure_datetime'] <= filter__departure_datetime_le]
+        df = df[df["departure_datetime"] <= filter__departure_datetime_le]
     if filter__departure_weekday is not None:
-        df = df[df['departure_weekday'] == filter__departure_weekday]
+        df = df[df["departure_weekday"] == filter__departure_weekday]
     if filter__departure_city is not None:
-        df = df[df['departure_city'] == filter__departure_city]
+        df = df[df["departure_city"] == filter__departure_city]
     if filter__arrival_datetime_ge is not None:
-        df = df[df['arrival_datetime'] >= filter__arrival_datetime_ge]
+        df = df[df["arrival_datetime"] >= filter__arrival_datetime_ge]
     if filter__arrival_datetime_le is not None:
-        df = df[df['arrival_datetime'] <= filter__arrival_datetime_le]
+        df = df[df["arrival_datetime"] <= filter__arrival_datetime_le]
     if filter__arrival_weekday is not None:
-        df = df[df['arrival_weekday'] == filter__arrival_weekday]
+        df = df[df["arrival_weekday"] == filter__arrival_weekday]
     if filter__arrival_city is not None:
-        df = df[df['arrival_city'] == filter__arrival_city]
+        df = df[df["arrival_city"] == filter__arrival_city]
     if filter__stops_le is not None:
-        df = df[df['stops'] <= filter__stops_le]
+        df = df[df["stops"] <= filter__stops_le]
     if filter__duration_le is not None:
-        df = df[df['duration'] <= filter__duration_le]
+        df = df[df["duration"] <= filter__duration_le]
     if filter__ticket_class is not None:
-        df = df[df['ticket_class'] == filter__ticket_class]
+        df = df[df["ticket_class"] == filter__ticket_class]
     if filter__ticket_price_le is not None:
-        df = df[df['ticket_price'] <= filter__ticket_price_le]
+        df = df[df["ticket_price"] <= filter__ticket_price_le]
     if sort_by is not None:
-        df = df.sort_values(by=sort_by,  ascending=True)
+        df = df.sort_values(by=sort_by, ascending=True)
 
-    return df.to_dict('records')
+    return df.to_dict("records")
 
 
 class GetFlights(BaseTool):
@@ -168,13 +245,13 @@ if you filter by departure_datetime or by arrival_datetime be sure you are using
 Tool requires a json input.
 Be sure syntax is correct.
 """
+
     def _run(self, **kwargs):
         try:
             return str(get_flights(**kwargs))
         except Exception as e:
             exception_name = type(e).__name__
-            return f"Exception name: {exception_name}"   
-
+            return f"Exception name: {exception_name}"
 
 
 class BuyTicket(BaseTool):
@@ -186,5 +263,6 @@ Provide json with flight information as input.
 Tool will return it back if the purchase is completed successfully.
 Be sure syntax is correct."
 """
+
     def _run(self, **ticket):
         return ticket

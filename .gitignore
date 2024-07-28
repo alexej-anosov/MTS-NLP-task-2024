@@ -165,4 +165,4 @@ cython_debug/
 .vscode
 
 # CSV files
-data/*.csv
+data/airplane_schedule.csv

@@ -2,13 +2,14 @@
 # 'gpt-3.5-turbo-0125'
 # 'gpt-4o'
 
-from config import config
-from openai import OpenAI
-import httpx
-from langchain.llms.base import LLM
+from typing import Any, List, Optional
+
 from langchain.callbacks.manager import CallbackManagerForLLMRun
-from typing import Optional, List, Mapping, Any
+from langchain.llms.base import LLM
+
+from config import config
 from utils.dataset_collection_utils import get_step_score
+
 
 class GptAgent(LLM):
     OPENAI_MODEL_NAME: Any
@@ -22,34 +23,45 @@ class GptAgent(LLM):
     def _llm_type(self) -> str:
         return "custom_gpt_agent"
 
-    def _call(self, prompt: str, stop: Optional[List[str]] = None,
-        run_manager: Optional[CallbackManagerForLLMRun] = None) -> str:
-        
+    def _call(
+        self,
+        prompt: str,
+        stop: Optional[List[str]] = None,
+        run_manager: Optional[CallbackManagerForLLMRun] = None,
+    ) -> str:
         messages = [
-         {"role": "user", "content": prompt},
+            {"role": "user", "content": prompt},
         ]
-        
+
         instruction = "You are instruction model. Follow the instractions exactly."
         input_text = self.tokenizer.apply_chat_template(messages, tokenize=False)
-                
-        d = {"messages": [{"role": "system", "content": f"{instruction}"},
-                        {"role": "user", "content": f"{input_text}"}]}
 
-        output = self.OPENAI_CLIENT.chat.completions.create(
-            model=self.OPENAI_MODEL_NAME,
-            messages=d['messages'],
-            max_tokens=2048,
-            temperature=self.temperature,
-        ).choices[0].message.content
+        d = {
+            "messages": [
+                {"role": "system", "content": f"{instruction}"},
+                {"role": "user", "content": f"{input_text}"},
+            ]
+        }
+
+        output = (
+            self.OPENAI_CLIENT.chat.completions.create(
+                model=self.OPENAI_MODEL_NAME,
+                messages=d["messages"],
+                max_tokens=2048,
+                temperature=self.temperature,
+            )
+            .choices[0]
+            .message.content
+        )
 
         if stop is not None:
-          for word in stop:
-            output = output.split(word)[0].strip()
+            for word in stop:
+                output = output.split(word)[0].strip()
 
         while not output.endswith("```"):
-          output += "`"
-        
-        if self.mode == 'dataset_collection':
+            output += "`"
+
+        if self.mode == "dataset_collection":
             self.train_df = get_step_score(self.train_df, input_text, output)
-        
+
         return output
