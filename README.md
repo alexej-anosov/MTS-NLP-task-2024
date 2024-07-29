@@ -108,7 +108,7 @@
 
 
 ##  Стэк
-* LangChain, Peft
+* LangChain, Transformers, Peft, HuggingFace
 * Models: Gpt_4o, Mistral7b-Instruct-v0.3
 * Experiments tracking: Wandb
 * Dataset Storage: Yandex CLoud S3
