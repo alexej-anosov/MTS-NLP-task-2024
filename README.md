@@ -62,7 +62,7 @@
 | Model  | Score |
 | ------------- | ------------- |
 | Mistral7B-Instruct-v0.3  | 0 |
-| Mistral7B-Instruct-v0.3 finetuned  | 19.5 |
+| Mistral7B-Instruct-v0.3 (4bit+LoRA)  | 19.5 |
 | Gpt-4o  | 75.5 |
 
 
