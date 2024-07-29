@@ -1,0 +1,11 @@
+artifact_path: experiments/artifacts/owr5vqs5yu10vtt1lojc.csv
+commit_hash: 1db1215adefdfcb4170cf40839162e49fdfc73f1
+config_path: configs/evaluation/mistral7b-instruct-v0.3_finetuned.yaml
+experiment_id: owr5vqs5yu10vtt1lojc
+params:
+  dataset: data/eval_dataset.csv
+  mode: evaluation
+  model_name: aanosov/Mistral-7B-Instruct-v0.3_travel_agent_apq21d55h1
+  model_type: mistral
+  tokenizer: mistralai/Mistral-7B-Instruct-v0.3
+score: 19.5
