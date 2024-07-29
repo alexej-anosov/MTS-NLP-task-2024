@@ -140,9 +140,9 @@ def main(config_path):
     agent_executor = CustomAgentExecutor(
         agent=agent,
         tools=tools,
-        verbose=True,
+        verbose=False,
         handle_parsing_errors=True,
-        max_iterations=10,
+        max_iterations=20,
         mode=params["mode"],
         evaluation_artifact=evaluation_artifact,
     )
