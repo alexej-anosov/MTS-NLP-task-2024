@@ -1,0 +1,5 @@
+model_type: mistral
+model_name: aanosov/Mistral-7B-Instruct-v0.3_travel_agent_apq21d55h1
+mode: evaluation
+tokenizer: mistralai/Mistral-7B-Instruct-v0.3
+dataset: data/eval_dataset.csv
