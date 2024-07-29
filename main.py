@@ -74,28 +74,30 @@ def main(config_path):
             temperature=temperature,
         )
     elif params["model_type"] == "mistral":
-        bnb_config = BitsAndBytesConfig(  
-            load_in_4bit= True,
-            bnb_4bit_quant_type= "nf4",
-            bnb_4bit_compute_dtype= torch.float16,
-            bnb_4bit_use_double_quant= False,
+        bnb_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=torch.float16,
+            bnb_4bit_use_double_quant=False,
         )
         model = AutoModelForCausalLM.from_pretrained(
-                '/home/admin/MTS-NLP-task-2024/Mistral-7B-Instruct-v0.3_travel_agent_dw691t3z2c',
-                quantization_config=bnb_config,
-                torch_dtype=torch.float16,
-                device_map="auto",
-                trust_remote_code=True,
+            "/home/admin/MTS-NLP-task-2024/Mistral-7B-Instruct-v0.3_travel_agent_dw691t3z2c",
+            quantization_config=bnb_config,
+            torch_dtype=torch.float16,
+            device_map="auto",
+            trust_remote_code=True,
         )
         model.config.use_cache = False
         model.eval()
-        
-        tokenizer = AutoTokenizer.from_pretrained(params['tokenizer'], trust_remote_code=True)
+
+        tokenizer = AutoTokenizer.from_pretrained(
+            params["tokenizer"], trust_remote_code=True
+        )
         tokenizer.padding_side = "right"
         tokenizer.pad_token = tokenizer.eos_token
         tokenizer.add_eos_token = True
         tokenizer.add_bos_token, tokenizer.add_eos_token
-        
+
         llm = MistralAgent(
             model=model,
             tokenizer=tokenizer,
@@ -153,7 +155,9 @@ def main(config_path):
                 print(request)
                 agent_executor.invoke({"input": request})
             except:
-                agent_executor.evaluation_artifact.loc[len(agent_executor.evaluation_artifact)] = [request, '', 0]
+                agent_executor.evaluation_artifact.loc[
+                    len(agent_executor.evaluation_artifact)
+                ] = [request, "", 0]
         evaluation_artifact = agent_executor.evaluation_artifact
         artifact_path = f"experiments/artifacts/{experiment_id}.csv"
         evaluation_artifact.to_csv(artifact_path)

@@ -2,10 +2,10 @@ from typing import Any, List, Optional
 
 from langchain.callbacks.manager import CallbackManagerForLLMRun
 from langchain.llms.base import LLM
+from transformers import pipeline
 
 from config import config
 from utils.dataset_collection_utils import get_step_score
-from transformers import pipeline
 
 
 class MistralAgent(LLM):
@@ -29,12 +29,21 @@ class MistralAgent(LLM):
             {"role": "user", "content": prompt},
         ]
 
-        input_text = self.tokenizer.apply_chat_template(messages, tokenize=False)[:40000]
-        
-        pipe = pipeline(task="text-generation", model=self.model, tokenizer=self.tokenizer, max_new_tokens=256)
+        input_text = self.tokenizer.apply_chat_template(messages, tokenize=False)[
+            :40000
+        ]
+
+        pipe = pipeline(
+            task="text-generation",
+            model=self.model,
+            tokenizer=self.tokenizer,
+            max_new_tokens=256,
+        )
         result = pipe(f"{input_text}")
 
-        output = result[0]['generated_text'].split("[/INST]")[1].replace("</s>", "").strip()
+        output = (
+            result[0]["generated_text"].split("[/INST]")[1].replace("</s>", "").strip()
+        )
 
         if stop is not None:
             for word in stop:

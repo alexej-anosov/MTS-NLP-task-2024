@@ -1,17 +1,16 @@
-import pandas as pd
 import random
-import numpy as np
-import torch
-import wandb
-from datasets import Dataset
-from peft import (LoraConfig, get_peft_model,
-                  prepare_model_for_kbit_training)
-from transformers import (AutoModelForCausalLM, AutoTokenizer,
-                          BitsAndBytesConfig,
-                          TrainingArguments)
-from trl import SFTTrainer
-from nanoid import generate
 
+import numpy as np
+import pandas as pd
+import torch
+from datasets import Dataset
+from nanoid import generate
+from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
+from transformers import (AutoModelForCausalLM, AutoTokenizer,
+                          BitsAndBytesConfig, TrainingArguments)
+from trl import SFTTrainer
+
+import wandb
 
 experiment_id = generate("1234567890qwertyuiopasdfghjklzxcvbnm", 10)
 
@@ -27,8 +26,10 @@ random.seed(seed)
 base_model = "mistralai/Mistral-7B-Instruct-v0.3"
 new_model = f"{base_model.split('/')[-1]}_travel_agent_{experiment_id}"
 
-config = {'experiment_id': experiment_id}
-run = wandb.init(project="MTS-NLP-task-2024", job_type="training", anonymous="allow", config=config)
+config = {"experiment_id": experiment_id}
+run = wandb.init(
+    project="MTS-NLP-task-2024", job_type="training", anonymous="allow", config=config
+)
 
 
 bnb_config = BitsAndBytesConfig(
@@ -118,7 +119,7 @@ training_arguments = TrainingArguments(
     save_strategy="steps",
     save_steps=10,
     logging_strategy="steps",
-    logging_steps=10, 
+    logging_steps=10,
     logging_first_step=True,
     optim="paged_adamw_32bit",
     learning_rate=5e-4,
@@ -130,7 +131,7 @@ training_arguments = TrainingArguments(
     group_by_length=False,
     lr_scheduler_type="constant",
     report_to="wandb",
-    load_best_model_at_end=True
+    load_best_model_at_end=True,
 )
 
 trainer = SFTTrainer(
